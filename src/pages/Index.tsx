@@ -128,9 +128,7 @@ const Index = () => {
       <main className="pt-24 pb-16">
         <section id="home" className="container mx-auto px-4 mb-16">
           <div className="max-w-4xl mx-auto text-center mb-12 animate-fade-in">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-              Будущее уже здесь
-            </h2>
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">В безопасности? </h2>
             <p className="text-xl text-muted-foreground text-center">Все новости из мира финансов и мошенничества </p>
           </div>
         </section>
