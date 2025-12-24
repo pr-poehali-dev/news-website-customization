@@ -19,9 +19,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Icon name="Newspaper" size={32} className="text-primary" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              NewsPortal
-            </h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">NekmiNevs</h1>
           </div>
 
           <nav className="hidden md:flex items-center gap-6">
