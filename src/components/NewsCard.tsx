@@ -1,6 +1,9 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from 'react';
 
 interface NewsCardProps {
   id: number;
@@ -13,9 +16,11 @@ interface NewsCardProps {
   comments: number;
   image?: string;
   featured?: boolean;
+  onSaveToggle?: (id: number, saved: boolean) => void;
 }
 
 const NewsCard = ({
+  id,
   title,
   category,
   excerpt,
@@ -25,7 +30,62 @@ const NewsCard = ({
   comments,
   image,
   featured = false,
+  onSaveToggle,
 }: NewsCardProps) => {
+  const { toast } = useToast();
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      setIsSaved(userData.savedNews?.includes(id) || false);
+    }
+  }, [id]);
+
+  const handleSaveClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    const storedUser = localStorage.getItem('user');
+    if (!storedUser) {
+      toast({
+        title: '⚠️ Требуется авторизация',
+        description: 'Войдите в систему, чтобы сохранять новости',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const userData = JSON.parse(storedUser);
+    const savedNews = userData.savedNews || [];
+    
+    let newSavedNews;
+    let newIsSaved;
+    
+    if (savedNews.includes(id)) {
+      newSavedNews = savedNews.filter((newsId: number) => newsId !== id);
+      newIsSaved = false;
+      toast({
+        title: '🗑️ Удалено из сохранённого',
+        description: 'Новость убрана из вашей коллекции',
+      });
+    } else {
+      newSavedNews = [...savedNews, id];
+      newIsSaved = true;
+      toast({
+        title: '✅ Добавлено в сохранённое',
+        description: 'Новость сохранена в ваш профиль',
+      });
+    }
+    
+    const updatedUser = { ...userData, savedNews: newSavedNews };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    setIsSaved(newIsSaved);
+    
+    if (onSaveToggle) {
+      onSaveToggle(id, newIsSaved);
+    }
+  };
   return (
     <Card className={`group cursor-pointer overflow-hidden hover-scale ${
       featured ? 'col-span-full md:col-span-2' : ''
@@ -70,9 +130,20 @@ const NewsCard = ({
             <span>{comments}</span>
           </div>
         </div>
-        <span className="text-xs text-primary font-medium story-link">
-          Читать далее
-        </span>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant={isSaved ? "default" : "ghost"}
+            onClick={handleSaveClick}
+            className="h-8 px-3"
+          >
+            <Icon name={isSaved ? "BookmarkCheck" : "Bookmark"} size={14} className="mr-1" />
+            {isSaved ? 'Сохранено' : 'Сохранить'}
+          </Button>
+          <span className="text-xs text-primary font-medium story-link">
+            Читать далее
+          </span>
+        </div>
       </CardFooter>
     </Card>
   );

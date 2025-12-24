@@ -71,6 +71,108 @@ const Profile = () => {
     navigate('/');
   };
 
+  const handleRemoveSaved = (newsId: number) => {
+    if (!user) return;
+    
+    const updatedSavedNews = (user.savedNews || []).filter(id => id !== newsId);
+    const updatedUser = { ...user, savedNews: updatedSavedNews };
+    
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    
+    toast({
+      title: '🗑️ Удалено',
+      description: 'Новость убрана из сохранённого',
+    });
+  };
+
+  const getSavedNewsById = (id: number) => {
+    const allNews = [
+      {
+        id: 1,
+        title: 'Утечка данных клиентов Альфа-Банка: под угрозой миллионы пользователей',
+        category: 'Безопасность',
+        excerpt: 'В даркнете появилась база с персональными данными клиентов Альфа-Банка. Эксперты оценивают масштаб утечки в несколько миллионов записей.',
+        date: '24 дек 2024',
+        author: 'Александр Киберов',
+        views: 45892,
+        comments: 234,
+      },
+      {
+        id: 2,
+        title: 'Прорыв в искусственном интеллекте: новая модель превзошла все ожидания',
+        category: 'Технологии',
+        excerpt: 'Исследователи представили революционную систему ИИ, способную решать сложные задачи с беспрецедентной точностью.',
+        date: '23 дек 2024',
+        author: 'Алексей Иванов',
+        views: 12458,
+        comments: 89,
+      },
+      {
+        id: 3,
+        title: 'Космический туризм становится реальностью',
+        category: 'Космос',
+        excerpt: 'Частные компании объявили о запуске коммерческих рейсов на орбиту уже в следующем году.',
+        date: '22 дек 2024',
+        author: 'Мария Петрова',
+        views: 8542,
+        comments: 56,
+      },
+      {
+        id: 4,
+        title: 'Экологическая революция: новый источник чистой энергии',
+        category: 'Экология',
+        excerpt: 'Ученые разработали технологию получения энергии из воздуха без вреда для окружающей среды.',
+        date: '21 дек 2024',
+        author: 'Дмитрий Смирнов',
+        views: 6234,
+        comments: 42,
+      },
+      {
+        id: 5,
+        title: 'Медицина будущего: лечение болезней на генетическом уровне',
+        category: 'Медицина',
+        excerpt: 'Новая терапия показала 95% эффективность в лечении ранее неизлечимых заболеваний.',
+        date: '20 дек 2024',
+        author: 'Елена Волкова',
+        views: 9876,
+        comments: 67,
+      },
+      {
+        id: 6,
+        title: 'Квантовые компьютеры вышли на новый уровень',
+        category: 'Наука',
+        excerpt: 'Прорыв в квантовых вычислениях открывает путь к решению задач, недоступных обычным компьютерам.',
+        date: '19 дек 2024',
+        author: 'Игорь Соколов',
+        views: 15678,
+        comments: 124,
+      },
+      {
+        id: 7,
+        title: 'Автономные автомобили заполнят города в 2025 году',
+        category: 'Транспорт',
+        excerpt: 'Крупнейшие автопроизводители завершили испытания беспилотных такси.',
+        date: '18 дек 2024',
+        author: 'Ольга Белова',
+        views: 13245,
+        comments: 98,
+      },
+      {
+        id: 8,
+        title: 'Виртуальная реальность изменит образование',
+        category: 'Образование',
+        excerpt: 'Школы и университеты внедряют VR-технологии для создания иммерсивного обучения.',
+        date: '17 дек 2024',
+        author: 'Сергей Новиков',
+        views: 11234,
+        comments: 76,
+      },
+    ];
+    
+    return allNews.find(news => news.id === id);
+  };
+
   if (!user) return null;
 
   const userInitials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -233,14 +335,68 @@ const Profile = () => {
                       <CardDescription>Новости, которые вы отметили для прочтения позже</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-center py-12 text-muted-foreground">
-                        <Icon name="Inbox" size={48} className="mx-auto mb-4 opacity-50" />
-                        <p>У вас пока нет сохранённых новостей</p>
-                        <Button variant="outline" className="mt-4" onClick={() => navigate('/')}>
-                          <Icon name="Search" size={18} className="mr-2" />
-                          Искать новости
-                        </Button>
-                      </div>
+                      {(!user.savedNews || user.savedNews.length === 0) ? (
+                        <div className="text-center py-12 text-muted-foreground">
+                          <Icon name="Inbox" size={48} className="mx-auto mb-4 opacity-50" />
+                          <p>У вас пока нет сохранённых новостей</p>
+                          <Button variant="outline" className="mt-4" onClick={() => navigate('/')}>
+                            <Icon name="Search" size={18} className="mr-2" />
+                            Искать новости
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {user.savedNews.map((newsId) => {
+                            const news = getSavedNewsById(newsId);
+                            if (!news) return null;
+                            
+                            return (
+                              <div 
+                                key={newsId} 
+                                className="flex gap-4 p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer"
+                                onClick={() => navigate('/')}
+                              >
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Badge variant="secondary">{news.category}</Badge>
+                                    <span className="text-xs text-muted-foreground">{news.date}</span>
+                                  </div>
+                                  <h3 className="font-semibold mb-2 hover:text-primary transition-colors">
+                                    {news.title}
+                                  </h3>
+                                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                                    {news.excerpt}
+                                  </p>
+                                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                    <div className="flex items-center gap-1">
+                                      <Icon name="User" size={12} />
+                                      <span>{news.author}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <Icon name="Eye" size={12} />
+                                      <span>{news.views}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <Icon name="MessageCircle" size={12} />
+                                      <span>{news.comments}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveSaved(newsId);
+                                  }}
+                                >
+                                  <Icon name="Trash2" size={18} className="text-destructive" />
+                                </Button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </TabsContent>
