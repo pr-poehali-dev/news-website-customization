@@ -1,9 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Icon from '@/components/ui/icon';
+import AuthModal from './AuthModal';
 
 const Header = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const scrollToSection = (id: string) => {
     setActiveSection(id);
@@ -65,16 +78,45 @@ const Header = () => {
             </button>
           </nav>
 
-          <Button size="sm" className="hidden md:flex">
-            <Icon name="Search" size={16} className="mr-2" />
-            Поиск
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button size="sm" variant="ghost" className="hidden md:flex">
+              <Icon name="Search" size={16} className="mr-2" />
+              Поиск
+            </Button>
 
-          <Button size="icon" variant="ghost" className="md:hidden">
-            <Icon name="Menu" size={24} />
-          </Button>
+            {user ? (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="flex items-center gap-2"
+                onClick={() => navigate('/profile')}
+              >
+                <Avatar className="w-8 h-8 border-2 border-primary/20">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-xs">
+                    {user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="hidden lg:inline">{user.name}</span>
+              </Button>
+            ) : (
+              <Button size="sm" onClick={() => setIsAuthOpen(true)}>
+                <Icon name="LogIn" size={16} className="mr-2" />
+                Войти
+              </Button>
+            )}
+
+            <Button size="icon" variant="ghost" className="md:hidden">
+              <Icon name="Menu" size={24} />
+            </Button>
+          </div>
         </div>
       </div>
+
+      <AuthModal 
+        open={isAuthOpen} 
+        onOpenChange={setIsAuthOpen}
+        onSuccess={(userData) => setUser(userData)}
+      />
     </header>
   );
 };
