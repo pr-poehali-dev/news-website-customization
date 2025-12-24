@@ -61,12 +61,12 @@ const Header = () => {
               Популярное
             </button>
             <button
-              onClick={() => scrollToSection('subscribe')}
+              onClick={() => scrollToSection('chat')}
               className={`text-sm font-medium transition-colors hover:text-primary ${
-                activeSection === 'subscribe' ? 'text-primary' : 'text-muted-foreground'
+                activeSection === 'chat' ? 'text-primary' : 'text-muted-foreground'
               }`}
             >
-              Подписка
+              Чат
             </button>
             <button
               onClick={() => scrollToSection('contacts')}

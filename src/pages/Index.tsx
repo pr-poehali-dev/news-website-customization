@@ -2,8 +2,8 @@ import { useState } from 'react';
 import Header from '@/components/Header';
 import NewsCard from '@/components/NewsCard';
 import CommentSection from '@/components/CommentSection';
+import Chat from '@/components/Chat';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 
@@ -112,14 +112,7 @@ const sampleComments = [
 ];
 
 const Index = () => {
-  const [email, setEmail] = useState('');
   const [selectedNews, setSelectedNews] = useState<number | null>(null);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert(`Спасибо за подписку! Письма будут приходить на ${email}`);
-    setEmail('');
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -173,30 +166,16 @@ const Index = () => {
           </div>
         </section>
 
-        <section id="subscribe" className="container mx-auto px-4 mb-16">
-          <Card className="max-w-2xl mx-auto bg-gradient-to-br from-card to-muted/30 border-primary/20">
-            <CardContent className="p-8 text-center">
-              <Icon name="Mail" size={48} className="mx-auto mb-4 text-primary" />
-              <h2 className="text-3xl font-bold mb-4">Подпишитесь на рассылку</h2>
-              <p className="text-muted-foreground mb-6">
-                Получайте самые интересные новости первыми
-              </p>
-              
-              <form onSubmit={handleSubscribe} className="flex gap-3 max-w-md mx-auto">
-                <Input
-                  type="email"
-                  placeholder="Ваш email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="flex-1"
-                />
-                <Button type="submit" size="lg">
-                  Подписаться
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+
+
+        <section id="chat" className="container mx-auto px-4 mb-16">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-8 flex items-center justify-center gap-3">
+              <Icon name="MessageSquare" size={32} className="text-primary" />
+              Общение
+            </h2>
+            <Chat />
+          </div>
         </section>
 
         <section id="contacts" className="container mx-auto px-4">
