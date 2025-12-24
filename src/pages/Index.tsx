@@ -131,9 +131,7 @@ const Index = () => {
             <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
               Будущее уже здесь
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Самые свежие новости науки, технологий и инноваций
-            </p>
+            <p className="text-xl text-muted-foreground text-center">Все новости из мира финансов и мошенничества </p>
           </div>
         </section>
 
